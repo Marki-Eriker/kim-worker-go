@@ -1,0 +1,19 @@
+type Request {
+  id: UInt!
+  serviceTypeID: UInt!
+  serviceType: ServiceTypeGetOutput @goField(forceResolver: true)
+  contractorID: UInt!
+  contractor: ContractorGetOutput @goField(forceResolver: true)
+  organizationContactID: UInt
+  organizationContact: OrganizationContactGetOutput @goField(forceResolver: true)
+  contractMediumType: ContractMediumType!
+  contractFilledTemplateID: UInt
+  status: RequestStatus!
+  createdAt: Time!
+  bankAccountID: UInt
+  bankAccount: BankAccountGetOutput @goField(forceResolver: true)
+  signatoryID: UInt
+  signatory: SignatoryGetOutput @goField(forceResolver: true)
+  ships: ShipGetOutput @goField(forceResolver: true)
+  contracts: ContactListOutput @goField(forceResolver: true)
+}

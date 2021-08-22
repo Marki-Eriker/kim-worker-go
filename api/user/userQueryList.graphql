@@ -1,0 +1,14 @@
+extend type UserQuery {
+  list(input: UserListInput!): UserListOutput! @goField(forceResolver: true) @hasRole(role: ADMIN)
+}
+
+input UserListInput {
+  filter: PaginationInput!
+}
+
+type UserListOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  pagination: PaginationOutput
+  record: [User!]
+}

@@ -1,0 +1,6 @@
+input PaginationInput {
+  page: Int = 1
+  pageSize: Int = 10
+  orderField: String = "id"
+  orderBy: OrderBy = ASC
+}

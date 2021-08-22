@@ -1,0 +1,11 @@
+type OrganizationContact {
+  id: UInt!
+  phone: String
+  email: String
+}
+
+type OrganizationContactGetOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: OrganizationContact
+}

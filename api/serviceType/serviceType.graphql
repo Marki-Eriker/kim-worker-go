@@ -1,0 +1,10 @@
+type ServiceType {
+  id: UInt!
+  name: String!
+}
+
+type ServiceTypeGetOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: ServiceType
+}

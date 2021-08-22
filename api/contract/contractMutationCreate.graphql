@@ -1,0 +1,16 @@
+extend type ContractMutation {
+  create(input: ContractCreateInput!): ContractCreateOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input ContractCreateInput {
+  contractNumber: String!
+  fileId: UInt!
+  requestId: UInt!
+  contractorId: UInt!
+}
+
+type ContractCreateOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: Contract
+}

@@ -1,0 +1,5 @@
+type AccessQuery
+
+extend type Query {
+  access: AccessQuery!
+}

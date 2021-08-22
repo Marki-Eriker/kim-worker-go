@@ -1,0 +1,16 @@
+extend type RequestQuery {
+  list(input: RequestListInput!): RequestListOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input RequestListInput {
+  serviceID: UInt
+  status: RequestStatus
+  filter: PaginationInput!
+}
+
+type RequestListOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  pagination: PaginationOutput
+  record: [Request!]
+}

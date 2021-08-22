@@ -1,0 +1,11 @@
+type Person {
+  id: UInt!
+  email: String
+  phone: String
+}
+
+type PersonFindOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: Person
+}

@@ -1,0 +1,8 @@
+extend type UserMutation {
+  logout: UserLogoutOutput! @goField(forceResolver: true)
+}
+
+type UserLogoutOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+}

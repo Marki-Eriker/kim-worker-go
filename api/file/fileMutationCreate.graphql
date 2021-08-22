@@ -1,0 +1,17 @@
+extend type FileMutation {
+  create(input: FileCreateInput!): FileCreateOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input FileCreateInput {
+  fileName: String!
+  extension: String!
+  mimeType: String!
+  size: UInt!
+  checksum: String!
+}
+
+type FileCreateOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: File
+}

@@ -1,0 +1,9 @@
+extend type AccessQuery {
+  find(ids: [UInt!]): AccessFindOutput!
+}
+
+type AccessFindOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: [Access!]
+}

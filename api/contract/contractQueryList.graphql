@@ -1,0 +1,15 @@
+extend type ContractQuery {
+  list(input: ContractListInput!): ContactListOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input ContractListInput {
+  serviceTypeID: UInt
+  filter: PaginationInput!
+}
+
+type ContactListOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  pagination: PaginationOutput
+  record: [Contract!]
+}

@@ -1,0 +1,7 @@
+type RequestQuery {
+  id: ID!
+}
+
+extend type Query {
+  request: RequestQuery!
+}

@@ -1,0 +1,16 @@
+extend type UserMutation {
+  updateMain(input: UserUpdateMainInput!): UserUpdateMainOutput! @goField(forceResolver: true) @hasRole(role: ADMIN)
+}
+
+input UserUpdateMainInput {
+  fullName: String
+  email: String
+  baseRole: BaseRole
+  userID: UInt!
+}
+
+type UserUpdateMainOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: User
+}

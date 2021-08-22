@@ -1,0 +1,18 @@
+extend type UserMutation {
+  create(input: UserCreateInput!): UserCreateOutput! @goField(forceResolver: true) @hasRole(role: ADMIN)
+}
+
+input UserCreateInput {
+  email: String!
+  fullName: String!
+  baseRole: BaseRole!
+  password: String!
+}
+
+type UserCreateOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: User
+}
+
+

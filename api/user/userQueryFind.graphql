@@ -1,0 +1,13 @@
+extend type UserQuery {
+  find(input: UserFindInput!): UserFindOutput! @goField(forceResolver: true) @hasRole(role: ADMIN)
+}
+
+input UserFindInput {
+  userID: UInt!
+}
+
+type UserFindOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: User
+}

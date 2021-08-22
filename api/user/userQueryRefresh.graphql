@@ -1,0 +1,9 @@
+extend type UserQuery {
+  refresh: UserRefreshOutput! @goField(forceResolver: true)
+}
+
+type UserRefreshOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  accessToken: String
+}

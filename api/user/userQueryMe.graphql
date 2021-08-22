@@ -1,0 +1,10 @@
+extend type UserQuery {
+  me: UserMeOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+
+type UserMeOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: User
+}

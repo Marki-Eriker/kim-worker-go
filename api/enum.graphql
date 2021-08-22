@@ -1,0 +1,28 @@
+enum BaseRole {
+  ADMIN
+  HEAD
+  WORKER
+  ANY
+}
+
+enum OrderBy {
+  ASC
+  DESC
+}
+
+enum ContractMediumType {
+  electronic
+  paper
+}
+
+enum RequestStatus {
+  pending
+  rejected
+  accepted
+  completed
+}
+
+enum ContractorType {
+  organization
+  person
+}

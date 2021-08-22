@@ -1,0 +1,5 @@
+type ContractMutation
+
+extend type Mutation {
+  contract: ContractMutation!
+}

@@ -1,0 +1,14 @@
+extend type UserMutation {
+  updateMe(input: UserUpdateMeInput!): UserUpdateMeOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input UserUpdateMeInput {
+  fullName: String
+  email: String
+}
+
+type UserUpdateMeOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: User
+}

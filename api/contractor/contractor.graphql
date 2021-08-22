@@ -1,0 +1,14 @@
+type Contractor {
+  id: UInt!
+  fillName: String!
+  shortName: String
+  contractorType: ContractorType!
+  personId: UInt
+  person: PersonFindOutput @goField(forceResolver: true)
+}
+
+type ContractorGetOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: Contractor
+}

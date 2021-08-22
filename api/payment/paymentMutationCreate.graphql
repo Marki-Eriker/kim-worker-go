@@ -1,0 +1,27 @@
+extend type PaymentMutation {
+  createInvoice(input: PaymentInvoiceCreateInput!): PaymentInvoiceCreateOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+  createConfirmation(input: PaymentConfirmationCreateInput!): PaymentConfirmationCreateOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input PaymentInvoiceCreateInput {
+  contractID: UInt!
+  fileID: UInt!
+}
+
+input PaymentConfirmationCreateInput {
+  fileID: UInt!
+  invoiceID: UInt!
+  contractID: UInt!
+}
+
+type PaymentInvoiceCreateOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: PaymentInvoice
+}
+
+type PaymentConfirmationCreateOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: PaymentConfirmation
+}

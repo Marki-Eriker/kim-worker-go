@@ -1,0 +1,8 @@
+extend type UserMutation {
+  delete(id: UInt!): UserDeleteOutput! @goField(forceResolver: true) @hasRole(role: ADMIN)
+}
+
+type UserDeleteOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+}

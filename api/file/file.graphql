@@ -1,0 +1,9 @@
+type File {
+  id: UInt!
+  originalFileName: String!
+  extension: String!
+  mimeType: String!
+  size: UInt!
+  checksum: String!
+  createdAt: Time!
+}

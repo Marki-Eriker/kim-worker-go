@@ -1,0 +1,7 @@
+type ContractQuery {
+  id: ID!
+}
+
+extend type Query {
+  contract: ContractQuery!
+}

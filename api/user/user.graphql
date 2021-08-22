@@ -1,0 +1,15 @@
+type User {
+  id: UInt!
+  email: String!
+  fullName: String!
+  baseRole: BaseRole!
+  createdAt: Time!
+  updatedAt: Time!
+  navigation: NavigationFindOutput! @goField(forceResolver: true)
+  access: AccessFindOutput! @goField(forceResolver: true)
+  serviceTypes: [UInt!]!
+}
+
+
+
+

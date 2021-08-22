@@ -1,0 +1,39 @@
+interface ProblemInterface {
+  message: String!
+}
+
+type InternalErrorProblem implements ProblemInterface {
+  message: String!
+}
+
+type ForbiddenErrorProblem implements ProblemInterface {
+  message: String!
+}
+
+type UnauthorizedErrorProblem implements ProblemInterface {
+  message: String!
+}
+
+type UnknowErrorProblem implements ProblemInterface {
+  message: String!
+}
+
+type ValidationErrorProblem implements ProblemInterface {
+  field: String!
+  message: String!
+}
+
+type InternalErrorOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+}
+
+type ForbiddenErrorOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+}
+
+type UnauthorizedOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+}

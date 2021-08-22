@@ -1,0 +1,5 @@
+type NavigationQuery
+
+extend type Query {
+  navigation: NavigationQuery!
+}

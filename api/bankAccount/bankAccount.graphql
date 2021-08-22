@@ -1,0 +1,15 @@
+type BankAccount {
+  id: UInt!
+  accountNumber: String!
+  correspondentNumber: String!
+  bik: String!
+  bankName: String!
+}
+
+type BankAccountGetOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: BankAccount
+}
+
+

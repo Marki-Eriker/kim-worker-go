@@ -1,0 +1,14 @@
+extend type UserMutation {
+  grantRequestAccess(input: UserGrantRequestAccessInput!): UserGrantRequestAccessOutput! @goField(forceResolver: true) @hasRole(role: ADMIN)
+}
+
+input UserGrantRequestAccessInput {
+  userID: UInt!
+  serviceTypes: [UInt!]!
+}
+
+type UserGrantRequestAccessOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: User
+}

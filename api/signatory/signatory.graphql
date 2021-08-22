@@ -1,0 +1,13 @@
+type Signatory {
+  id: UInt!
+  name: String
+  actingBasis: String
+  warrantNumber: String
+  warrantDate: Time
+}
+
+type SignatoryGetOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: Signatory
+}

@@ -1,0 +1,5 @@
+type PaymentMutation
+
+extend type Mutation {
+  payment: PaymentMutation!
+}

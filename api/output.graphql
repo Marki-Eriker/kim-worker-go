@@ -1,0 +1,13 @@
+type PaginationOutput {
+  totalItems: Int!
+  totalPages: Int!
+  page: Int!
+  itemsPerPage: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+interface CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+}

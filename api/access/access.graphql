@@ -1,0 +1,4 @@
+type Access {
+  id: UInt!
+  name: String!
+}

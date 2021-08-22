@@ -1,0 +1,19 @@
+type Ship {
+  id: UInt!
+  name: String!
+  hullNumber: String
+  projectNumber: String
+  length: Float
+  width: Float
+  hullHeight: Float
+  cubic: Float
+  flag: String
+  shipConfirmParamsCertificateIds: [UInt!]
+  ownerShipRightsCertificateIds: [UInt!]
+}
+
+type ShipGetOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: [Ship!]
+}

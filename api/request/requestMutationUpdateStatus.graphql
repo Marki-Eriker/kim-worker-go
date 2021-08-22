@@ -1,0 +1,14 @@
+extend type RequestMutation {
+  updateStatus(input: RequestUpdateStatusInput!): RequestUpdateStatusOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input RequestUpdateStatusInput {
+  requestID: UInt!
+  newStatus: RequestStatus!
+}
+
+type RequestUpdateStatusOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: Request
+}

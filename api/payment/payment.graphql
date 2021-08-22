@@ -1,0 +1,29 @@
+type PaymentInvoice {
+  id: UInt!
+  contractID: UInt!
+  fileID: UInt!
+  createdAt: Time!
+  confirmation: PaymentConfirmationFindOutput @goField(forceResolver: true)
+}
+
+type PaymentConfirmation {
+  id: UInt!
+  fileID: UInt!
+  paymentInvoiceID: UInt!
+  proven: Boolean!
+  contractID: UInt!
+  createdAt: Time!
+  updatedAt: Time
+}
+
+type PaymentInvoiceFindOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: [PaymentInvoice!]
+}
+
+type PaymentConfirmationFindOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: PaymentConfirmation
+}

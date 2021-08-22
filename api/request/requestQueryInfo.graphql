@@ -1,0 +1,13 @@
+extend type RequestQuery {
+  info(input: RequestInfoInput!): RequestInfoOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input RequestInfoInput {
+  requestID: UInt!
+}
+
+type RequestInfoOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: Request
+}

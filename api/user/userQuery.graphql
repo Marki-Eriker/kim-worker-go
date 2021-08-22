@@ -1,0 +1,7 @@
+type UserQuery {
+  id: ID!
+}
+
+extend type Query {
+  user: UserQuery!
+}

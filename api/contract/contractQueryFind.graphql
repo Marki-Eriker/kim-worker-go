@@ -1,0 +1,13 @@
+extend type ContractQuery {
+  find(input: ContractFindInput!): ContractFindOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input ContractFindInput {
+  contractID: UInt!
+}
+
+type ContractFindOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: Contract
+}

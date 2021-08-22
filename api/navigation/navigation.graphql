@@ -1,0 +1,11 @@
+type Navigation {
+  id: UInt!
+  path: String!
+  title: String!
+  description: String
+  icon: String
+  parentId: UInt!
+  order: UInt!
+  node: Boolean!
+  dev: Boolean!
+}

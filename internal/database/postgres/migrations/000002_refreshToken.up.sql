@@ -1,0 +1,10 @@
+CREATE TABLE refresh_token
+(
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP DEFAULT NOW() NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    agent VARCHAR NOT NULL,
+    expires_in TIMESTAMP NOT NULL,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE
+)

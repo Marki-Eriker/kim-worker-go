@@ -1,0 +1,9 @@
+extend type NavigationQuery {
+  find(ids: [UInt!]): NavigationFindOutput!
+}
+
+type NavigationFindOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: [Navigation!]
+}

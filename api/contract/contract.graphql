@@ -1,0 +1,11 @@
+type Contract {
+  id: UInt!
+  serviceRequestID: UInt!
+  serviceRequest: RequestInfoOutput @goField(forceResolver: true)
+  number: String!
+  createdAt: Time!
+  contractorID: UInt!
+  contractor: ContractorGetOutput @goField(forceResolver: true)
+  fileStorageItemID: UInt!
+  paymentInvoice: PaymentInvoiceFindOutput @goField(forceResolver: true)
+}

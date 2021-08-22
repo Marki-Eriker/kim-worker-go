@@ -1,0 +1,13 @@
+extend type PaymentMutation {
+  approveConfirmation(input: PaymentConfirmationApproveInput!): PaymentConfirmationApproveOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input PaymentConfirmationApproveInput {
+  confirmationID: UInt!
+}
+
+type PaymentConfirmationApproveOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  record: PaymentConfirmation
+}

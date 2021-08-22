@@ -1,0 +1,14 @@
+extend type UserMutation {
+  login(input: UserLoginInput!): UserLoginOutput! @goField(forceResolver: true)
+}
+
+input UserLoginInput {
+  email: String!
+  password: String!
+}
+
+type UserLoginOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+  accessToken: String
+}
