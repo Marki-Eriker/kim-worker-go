@@ -130,6 +130,22 @@ type ContractorGetOutput struct {
 
 func (ContractorGetOutput) IsCoreOutput() {}
 
+type EmailQuery struct {
+	Send *EmailSendOutput `json:"send"`
+}
+
+type EmailSendInput struct {
+	Address string `json:"address"`
+	Message string `json:"message"`
+}
+
+type EmailSendOutput struct {
+	Ok    bool               `json:"ok"`
+	Error []ProblemInterface `json:"error"`
+}
+
+func (EmailSendOutput) IsCoreOutput() {}
+
 type File struct {
 	ID               uint      `json:"id"`
 	OriginalFileName string    `json:"originalFileName"`

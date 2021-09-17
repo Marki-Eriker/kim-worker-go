@@ -12,6 +12,7 @@ require (
 	github.com/rs/cors v1.8.0 // indirect
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
 	github.com/vektah/gqlparser/v2 v2.2.0 // indirect
+	github.com/xhit/go-simple-mail/v2 v2.10.0 // indirect
 	go.uber.org/zap v1.19.0 // indirect
 	golang.org/x/crypto v0.0.0-20210812204632-0ba0e8f03122 // indirect
 )

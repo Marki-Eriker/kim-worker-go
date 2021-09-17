@@ -24,7 +24,7 @@ func NewApp(args *Args) (*App, error) {
 	}
 
 	repos := NewRepositories(databases)
-	services := NewServices(repos)
+	services := NewServices(repos, args.EmailCredentials)
 
 	app := App{
 		Logger:       logger,

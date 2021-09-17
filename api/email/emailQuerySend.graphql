@@ -1,0 +1,13 @@
+extend type EmailQuery {
+  send(input: EmailSendInput!): EmailSendOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input EmailSendInput {
+  address: String!
+  message: String!
+}
+
+type EmailSendOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+}

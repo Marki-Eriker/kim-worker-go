@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/marki-eriker/kim-worker-go/internal/feature/contract"
+	"github.com/marki-eriker/kim-worker-go/internal/feature/email"
 	"github.com/marki-eriker/kim-worker-go/internal/feature/file"
 	"github.com/marki-eriker/kim-worker-go/internal/feature/payment"
 	"github.com/marki-eriker/kim-worker-go/internal/feature/refreshtoken"
@@ -16,9 +17,10 @@ type Services struct {
 	ContractService     contract.IService
 	FileService         file.IService
 	PaymentService      payment.IService
+	EmailService        email.IService
 }
 
-func NewServices(repos *Repositories) *Services {
+func NewServices(repos *Repositories, emailCredentials *EmailCredentials) *Services {
 	return &Services{
 		UserService:         user.NewService(repos.UserRepository),
 		RefreshTokenService: refreshtoken.NewService(repos.RefreshTokenRepository),
@@ -26,5 +28,13 @@ func NewServices(repos *Repositories) *Services {
 		ContractService:     contract.NewService(repos.ContractRepository),
 		FileService:         file.NewService(repos.FileRepository),
 		PaymentService:      payment.NewService(repos.PaymentRepository),
+		EmailService: email.NewService(
+			emailCredentials.SMTPHost,
+			emailCredentials.SMTPPort,
+			emailCredentials.SMTPUser,
+			emailCredentials.SMTPPassword,
+			emailCredentials.SMTPFrom,
+			emailCredentials.SMTPFromMessage,
+		),
 	}
 }

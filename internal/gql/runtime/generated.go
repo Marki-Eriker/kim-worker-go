@@ -41,6 +41,7 @@ type ResolverRoot interface {
 	ContractMutation() ContractMutationResolver
 	ContractQuery() ContractQueryResolver
 	Contractor() ContractorResolver
+	EmailQuery() EmailQueryResolver
 	FileMutation() FileMutationResolver
 	Mutation() MutationResolver
 	PaymentInvoice() PaymentInvoiceResolver
@@ -142,6 +143,15 @@ type ComplexityRoot struct {
 		Error  func(childComplexity int) int
 		Ok     func(childComplexity int) int
 		Record func(childComplexity int) int
+	}
+
+	EmailQuery struct {
+		Send func(childComplexity int, input model.EmailSendInput) int
+	}
+
+	EmailSendOutput struct {
+		Error func(childComplexity int) int
+		Ok    func(childComplexity int) int
 	}
 
 	File struct {
@@ -302,6 +312,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Access     func(childComplexity int) int
 		Contract   func(childComplexity int) int
+		Email      func(childComplexity int) int
 		Navigation func(childComplexity int) int
 		Request    func(childComplexity int) int
 		User       func(childComplexity int) int
@@ -538,6 +549,9 @@ type ContractQueryResolver interface {
 type ContractorResolver interface {
 	Person(ctx context.Context, obj *model.Contractor) (*model.PersonFindOutput, error)
 }
+type EmailQueryResolver interface {
+	Send(ctx context.Context, obj *model.EmailQuery, input model.EmailSendInput) (*model.EmailSendOutput, error)
+}
 type FileMutationResolver interface {
 	Create(ctx context.Context, obj *model.FileMutation, input model.FileCreateInput) (*model.FileCreateOutput, error)
 }
@@ -559,6 +573,7 @@ type PaymentMutationResolver interface {
 type QueryResolver interface {
 	Access(ctx context.Context) (*model.AccessQuery, error)
 	Contract(ctx context.Context) (*model.ContractQuery, error)
+	Email(ctx context.Context) (*model.EmailQuery, error)
 	Navigation(ctx context.Context) (*model.NavigationQuery, error)
 	Request(ctx context.Context) (*model.RequestQuery, error)
 	User(ctx context.Context) (*model.UserQuery, error)
@@ -960,6 +975,32 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ContractorGetOutput.Record(childComplexity), true
+
+	case "EmailQuery.send":
+		if e.complexity.EmailQuery.Send == nil {
+			break
+		}
+
+		args, err := ec.field_EmailQuery_send_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.EmailQuery.Send(childComplexity, args["input"].(model.EmailSendInput)), true
+
+	case "EmailSendOutput.error":
+		if e.complexity.EmailSendOutput.Error == nil {
+			break
+		}
+
+		return e.complexity.EmailSendOutput.Error(childComplexity), true
+
+	case "EmailSendOutput.ok":
+		if e.complexity.EmailSendOutput.Ok == nil {
+			break
+		}
+
+		return e.complexity.EmailSendOutput.Ok(childComplexity), true
 
 	case "File.checksum":
 		if e.complexity.File.Checksum == nil {
@@ -1580,6 +1621,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Contract(childComplexity), true
+
+	case "Query.email":
+		if e.complexity.Query.Email == nil {
+			break
+		}
+
+		return e.complexity.Query.Email(childComplexity), true
 
 	case "Query.navigation":
 		if e.complexity.Query.Navigation == nil {
@@ -2701,6 +2749,26 @@ type ContractorGetOutput implements CoreOutput {
   record: Contractor
 }
 `, BuiltIn: false},
+	{Name: "api/email/emailQuery.graphql", Input: `type EmailQuery
+
+extend type Query {
+  email: EmailQuery!
+}
+`, BuiltIn: false},
+	{Name: "api/email/emailQuerySend.graphql", Input: `extend type EmailQuery {
+  send(input: EmailSendInput!): EmailSendOutput! @goField(forceResolver: true) @hasRole(role: ANY)
+}
+
+input EmailSendInput {
+  address: String!
+  message: String!
+}
+
+type EmailSendOutput implements CoreOutput {
+  ok: Boolean!
+  error: [ProblemInterface!]
+}
+`, BuiltIn: false},
 	{Name: "api/enum.graphql", Input: `enum BaseRole {
   ADMIN
   HEAD
@@ -3350,6 +3418,21 @@ func (ec *executionContext) field_ContractQuery_list_args(ctx context.Context, r
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNContractListInput2githubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐContractListInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_EmailQuery_send_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.EmailSendInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEmailSendInput2githubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐEmailSendInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -5317,6 +5400,139 @@ func (ec *executionContext) _ContractorGetOutput_record(ctx context.Context, fie
 	res := resTmp.(*model.Contractor)
 	fc.Result = res
 	return ec.marshalOContractor2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐContractor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EmailQuery_send(ctx context.Context, field graphql.CollectedField, obj *model.EmailQuery) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EmailQuery",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_EmailQuery_send_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.EmailQuery().Send(rctx, obj, args["input"].(model.EmailSendInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			role, err := ec.unmarshalNBaseRole2githubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐBaseRole(ctx, "ANY")
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, obj, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.EmailSendOutput); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/marki-eriker/kim-worker-go/internal/gql/model.EmailSendOutput`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.EmailSendOutput)
+	fc.Result = res
+	return ec.marshalNEmailSendOutput2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐEmailSendOutput(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EmailSendOutput_ok(ctx context.Context, field graphql.CollectedField, obj *model.EmailSendOutput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EmailSendOutput",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Ok, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EmailSendOutput_error(ctx context.Context, field graphql.CollectedField, obj *model.EmailSendOutput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EmailSendOutput",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Error, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]model.ProblemInterface)
+	fc.Result = res
+	return ec.marshalOProblemInterface2ᚕgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐProblemInterfaceᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _File_id(ctx context.Context, field graphql.CollectedField, obj *model.File) (ret graphql.Marshaler) {
@@ -8339,6 +8555,41 @@ func (ec *executionContext) _Query_contract(ctx context.Context, field graphql.C
 	res := resTmp.(*model.ContractQuery)
 	fc.Result = res
 	return ec.marshalNContractQuery2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐContractQuery(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_email(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Email(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.EmailQuery)
+	fc.Result = res
+	return ec.marshalNEmailQuery2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐEmailQuery(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_navigation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -14088,6 +14339,34 @@ func (ec *executionContext) unmarshalInputContractListInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEmailSendInput(ctx context.Context, obj interface{}) (model.EmailSendInput, error) {
+	var it model.EmailSendInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "address":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
+			it.Address, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "message":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("message"))
+			it.Message, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputFileCreateInput(ctx context.Context, obj interface{}) (model.FileCreateInput, error) {
 	var it model.FileCreateInput
 	var asMap = obj.(map[string]interface{})
@@ -14655,6 +14934,13 @@ func (ec *executionContext) _CoreOutput(ctx context.Context, sel ast.SelectionSe
 			return graphql.Null
 		}
 		return ec._ContractorGetOutput(ctx, sel, obj)
+	case model.EmailSendOutput:
+		return ec._EmailSendOutput(ctx, sel, &obj)
+	case *model.EmailSendOutput:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._EmailSendOutput(ctx, sel, obj)
 	case model.FileCreateOutput:
 		return ec._FileCreateOutput(ctx, sel, &obj)
 	case *model.FileCreateOutput:
@@ -15429,6 +15715,71 @@ func (ec *executionContext) _ContractorGetOutput(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._ContractorGetOutput_error(ctx, field, obj)
 		case "record":
 			out.Values[i] = ec._ContractorGetOutput_record(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var emailQueryImplementors = []string{"EmailQuery"}
+
+func (ec *executionContext) _EmailQuery(ctx context.Context, sel ast.SelectionSet, obj *model.EmailQuery) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, emailQueryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EmailQuery")
+		case "send":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._EmailQuery_send(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var emailSendOutputImplementors = []string{"EmailSendOutput", "CoreOutput"}
+
+func (ec *executionContext) _EmailSendOutput(ctx context.Context, sel ast.SelectionSet, obj *model.EmailSendOutput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, emailSendOutputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EmailSendOutput")
+		case "ok":
+			out.Values[i] = ec._EmailSendOutput_ok(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "error":
+			out.Values[i] = ec._EmailSendOutput_error(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -16386,6 +16737,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_contract(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "email":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_email(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -18187,6 +18552,39 @@ func (ec *executionContext) unmarshalNContractorType2githubᚗcomᚋmarkiᚑerik
 
 func (ec *executionContext) marshalNContractorType2githubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐContractorType(ctx context.Context, sel ast.SelectionSet, v model.ContractorType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNEmailQuery2githubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐEmailQuery(ctx context.Context, sel ast.SelectionSet, v model.EmailQuery) graphql.Marshaler {
+	return ec._EmailQuery(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNEmailQuery2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐEmailQuery(ctx context.Context, sel ast.SelectionSet, v *model.EmailQuery) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._EmailQuery(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNEmailSendInput2githubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐEmailSendInput(ctx context.Context, v interface{}) (model.EmailSendInput, error) {
+	res, err := ec.unmarshalInputEmailSendInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNEmailSendOutput2githubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐEmailSendOutput(ctx context.Context, sel ast.SelectionSet, v model.EmailSendOutput) graphql.Marshaler {
+	return ec._EmailSendOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNEmailSendOutput2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐEmailSendOutput(ctx context.Context, sel ast.SelectionSet, v *model.EmailSendOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._EmailSendOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNFileCreateInput2githubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐFileCreateInput(ctx context.Context, v interface{}) (model.FileCreateInput, error) {

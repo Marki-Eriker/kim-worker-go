@@ -13,6 +13,16 @@ type Args struct {
 	PrimaryDatabaseURL string
 	LKDatabaseURL      string
 	LogLevel           string
+	EmailCredentials   *EmailCredentials
+}
+
+type EmailCredentials struct {
+	SMTPHost        string
+	SMTPPort        string
+	SMTPUser        string
+	SMTPPassword    string
+	SMTPFrom        string
+	SMTPFromMessage string
 }
 
 func NewArgs() (*Args, error) {
@@ -40,11 +50,46 @@ func NewArgs() (*Args, error) {
 		return nil, fmt.Errorf("invalid logLevel: %s: alloved values: %v", logLevel, getAllowedLogLevels())
 	}
 
+	SMTPHost := os.Getenv("SMTP_HOST")
+	if SMTPHost == "" {
+		return nil, fmt.Errorf("SMTP host must be set")
+	}
+
+	SMTPPort := os.Getenv("SMTP_PORT")
+	if SMTPPort == "" {
+		return nil, fmt.Errorf("SMTP port must be set")
+	}
+
+	SMTPUser := os.Getenv("SMTP_USER")
+	if SMTPUser == "" {
+		return nil, fmt.Errorf("SMTP user must be set")
+	}
+	SMTPPassword := os.Getenv("SMTP_PASSWORD")
+	if SMTPPassword == "" {
+		return nil, fmt.Errorf("SMTP password must be set")
+	}
+	SMTPFrom := os.Getenv("SMTP_FROM_EMAIL")
+	if SMTPFrom == "" {
+		return nil, fmt.Errorf("SMTP form email must be set")
+	}
+	SMTPFromMessage := os.Getenv("SMTP_FROM_MESSAGE")
+	if SMTPFromMessage == "" {
+		return nil, fmt.Errorf("SMTP from message must be set")
+	}
+
 	return &Args{
 		ListenPort:         listenPort,
 		PrimaryDatabaseURL: primaryDatabaseURL,
 		LKDatabaseURL:      lkDatabaseURL,
 		LogLevel:           logLevel,
+		EmailCredentials: &EmailCredentials{
+			SMTPHost:        SMTPHost,
+			SMTPPort:        SMTPPort,
+			SMTPUser:        SMTPUser,
+			SMTPPassword:    SMTPPassword,
+			SMTPFrom:        SMTPFrom,
+			SMTPFromMessage: SMTPFromMessage,
+		},
 	}, nil
 }
 
