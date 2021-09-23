@@ -14,7 +14,7 @@ func NewAppHandler(app *application.App) *chi.Mux {
 	router.Use(middleware.Logger)
 	router.Use(customMiddleware.AuthMiddleware(app.Repositories.UserRepository))
 	router.Use(cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3010", "http://localhost:5000"},
+		AllowedOrigins:   []string{"http://localhost:3010", "http://localhost:5000", "http://10.1.100.120:3010"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
