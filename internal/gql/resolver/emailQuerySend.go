@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+
 	"github.com/marki-eriker/kim-worker-go/internal/gql/model"
 )
 

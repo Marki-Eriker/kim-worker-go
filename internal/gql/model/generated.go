@@ -101,6 +101,7 @@ func (ContractFindOutput) IsCoreOutput() {}
 type ContractListInput struct {
 	ServiceTypeID *uint            `json:"serviceTypeID"`
 	Filter        *PaginationInput `json:"filter"`
+	PaymentFilter *PaymentFilter   `json:"paymentFilter"`
 }
 
 type ContractMutation struct {
@@ -831,12 +832,56 @@ func (e OrderBy) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type PaymentFilter string
+
+const (
+	PaymentFilterNotPaid     PaymentFilter = "NOT_PAID"
+	PaymentFilterNotVerified PaymentFilter = "NOT_VERIFIED"
+	PaymentFilterAll         PaymentFilter = "ALL"
+)
+
+var AllPaymentFilter = []PaymentFilter{
+	PaymentFilterNotPaid,
+	PaymentFilterNotVerified,
+	PaymentFilterAll,
+}
+
+func (e PaymentFilter) IsValid() bool {
+	switch e {
+	case PaymentFilterNotPaid, PaymentFilterNotVerified, PaymentFilterAll:
+		return true
+	}
+	return false
+}
+
+func (e PaymentFilter) String() string {
+	return string(e)
+}
+
+func (e *PaymentFilter) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PaymentFilter(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PaymentFilter", str)
+	}
+	return nil
+}
+
+func (e PaymentFilter) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type RequestStatus string
 
 const (
 	RequestStatusPending   RequestStatus = "pending"
 	RequestStatusRejected  RequestStatus = "rejected"
 	RequestStatusAccepted  RequestStatus = "accepted"
+	RequestStatusSigned    RequestStatus = "signed"
 	RequestStatusCompleted RequestStatus = "completed"
 )
 
@@ -844,12 +889,13 @@ var AllRequestStatus = []RequestStatus{
 	RequestStatusPending,
 	RequestStatusRejected,
 	RequestStatusAccepted,
+	RequestStatusSigned,
 	RequestStatusCompleted,
 }
 
 func (e RequestStatus) IsValid() bool {
 	switch e {
-	case RequestStatusPending, RequestStatusRejected, RequestStatusAccepted, RequestStatusCompleted:
+	case RequestStatusPending, RequestStatusRejected, RequestStatusAccepted, RequestStatusSigned, RequestStatusCompleted:
 		return true
 	}
 	return false

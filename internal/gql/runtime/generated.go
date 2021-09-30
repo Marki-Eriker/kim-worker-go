@@ -2725,6 +2725,7 @@ type ContractFindOutput implements CoreOutput {
 input ContractListInput {
   serviceTypeID: UInt
   filter: PaginationInput!
+  paymentFilter: PaymentFilter = ALL
 }
 
 type ContactListOutput implements CoreOutput {
@@ -2790,12 +2791,19 @@ enum RequestStatus {
   pending
   rejected
   accepted
+  signed
   completed
 }
 
 enum ContractorType {
   organization
   person
+}
+
+enum PaymentFilter {
+  NOT_PAID
+  NOT_VERIFIED
+  ALL
 }
 `, BuiltIn: false},
 	{Name: "api/file/file.graphql", Input: `type File {
@@ -14315,6 +14323,10 @@ func (ec *executionContext) unmarshalInputContractListInput(ctx context.Context,
 	var it model.ContractListInput
 	var asMap = obj.(map[string]interface{})
 
+	if _, present := asMap["paymentFilter"]; !present {
+		asMap["paymentFilter"] = "ALL"
+	}
+
 	for k, v := range asMap {
 		switch k {
 		case "serviceTypeID":
@@ -14330,6 +14342,14 @@ func (ec *executionContext) unmarshalInputContractListInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
 			it.Filter, err = ec.unmarshalNPaginationInput2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐPaginationInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "paymentFilter":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paymentFilter"))
+			it.PaymentFilter, err = ec.unmarshalOPaymentFilter2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐPaymentFilter(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -19737,6 +19757,22 @@ func (ec *executionContext) marshalOPaymentConfirmationFindOutput2ᚖgithubᚗco
 		return graphql.Null
 	}
 	return ec._PaymentConfirmationFindOutput(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPaymentFilter2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐPaymentFilter(ctx context.Context, v interface{}) (*model.PaymentFilter, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.PaymentFilter)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPaymentFilter2ᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐPaymentFilter(ctx context.Context, sel ast.SelectionSet, v *model.PaymentFilter) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOPaymentInvoice2ᚕᚖgithubᚗcomᚋmarkiᚑerikerᚋkimᚑworkerᚑgoᚋinternalᚋgqlᚋmodelᚐPaymentInvoiceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PaymentInvoice) graphql.Marshaler {

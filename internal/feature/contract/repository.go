@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-pg/pg/v10"
+	"github.com/go-pg/pg/v10/orm"
+	"github.com/marki-eriker/kim-worker-go/internal/feature/payment"
 	"github.com/marki-eriker/kim-worker-go/internal/feature/request"
 	"github.com/marki-eriker/kim-worker-go/internal/gql/model"
 )
@@ -35,7 +37,35 @@ func (r *Repository) GetAllContract(ctx context.Context, input *model.ContractLi
 	requestIDs.Where("service_type_id IN (?)", pg.In(serviceTypes))
 	requestIDs.Where("status = ?", model.RequestStatusCompleted)
 
+	var contractIDs *orm.Query
+
 	q := r.db.ModelContext(ctx, &contract).Order(order).Limit(limit).Offset(offset)
+
+	if *input.PaymentFilter != model.PaymentFilterAll {
+		contractIDs = r.db.ModelContext(ctx, (*Contract)(nil)).ColumnExpr("id")
+
+		switch *input.PaymentFilter {
+		case model.PaymentFilterNotPaid:
+			invoiceWithConfirmIDs := r.db.ModelContext(ctx, (*payment.Confirmation)(nil))
+			invoiceWithConfirmIDs.ColumnExpr("contract_payment_invoice_id")
+
+			contractWithoutPaymentConfirmationIDs := r.db.ModelContext(ctx, (*payment.Invoice)(nil))
+			contractWithoutPaymentConfirmationIDs.ColumnExpr("contract_id")
+			contractWithoutPaymentConfirmationIDs.Where("id NOT IN (?)", invoiceWithConfirmIDs)
+
+			contractIDs.Where("id IN (?)", contractWithoutPaymentConfirmationIDs)
+
+			q.Where("id IN (?)", contractIDs)
+		case model.PaymentFilterNotVerified:
+			contractWitNotVerifiedPaymentConfirmationIDS := r.db.ModelContext(ctx, (*payment.Confirmation)(nil))
+			contractWitNotVerifiedPaymentConfirmationIDS.ColumnExpr("contract_id")
+			contractWitNotVerifiedPaymentConfirmationIDS.Where("proven = ?", false)
+
+			contractIDs.Where("id IN (?)", contractWitNotVerifiedPaymentConfirmationIDS)
+			q.Where("id IN (?)", contractIDs)
+		}
+	}
+
 	q.Where("service_request_id IN (?)", requestIDs)
 	count, err := q.SelectAndCount()
 

@@ -19,10 +19,17 @@ enum RequestStatus {
   pending
   rejected
   accepted
+  signed
   completed
 }
 
 enum ContractorType {
   organization
   person
+}
+
+enum PaymentFilter {
+  NOT_PAID
+  NOT_VERIFIED
+  ALL
 }

@@ -5,6 +5,7 @@ extend type ContractQuery {
 input ContractListInput {
   serviceTypeID: UInt
   filter: PaginationInput!
+  paymentFilter: PaymentFilter = ALL
 }
 
 type ContactListOutput implements CoreOutput {
