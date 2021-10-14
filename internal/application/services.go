@@ -28,13 +28,6 @@ func NewServices(repos *Repositories, emailCredentials *EmailCredentials) *Servi
 		ContractService:     contract.NewService(repos.ContractRepository),
 		FileService:         file.NewService(repos.FileRepository),
 		PaymentService:      payment.NewService(repos.PaymentRepository),
-		EmailService: email.NewService(
-			emailCredentials.SMTPHost,
-			emailCredentials.SMTPPort,
-			emailCredentials.SMTPUser,
-			emailCredentials.SMTPPassword,
-			emailCredentials.SMTPFrom,
-			emailCredentials.SMTPFromMessage,
-		),
+		EmailService:        email.NewService(emailCredentials),
 	}
 }
