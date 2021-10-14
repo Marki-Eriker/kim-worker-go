@@ -2,7 +2,6 @@ package email
 
 import (
 	"crypto/tls"
-	"github.com/marki-eriker/kim-worker-go/internal/application"
 	mail "github.com/xhit/go-simple-mail/v2"
 	"strconv"
 )
@@ -17,18 +16,18 @@ type Service struct {
 	FromMessage string
 }
 
-func NewService(args *application.EmailCredentials) *Service {
+func NewService(host, port, user, password, from, fromMessage string) *Service {
 	mailer := mail.NewSMTPClient()
 
-	mailer.Host = args.SMTPHost
-	mailer.Port, _ = strconv.Atoi(args.SMTPPort)
-	mailer.Username = args.SMTPUser
-	mailer.Password = args.SMTPPassword
+	mailer.Host = host
+	mailer.Port, _ = strconv.Atoi(port)
+	mailer.Username = user
+	mailer.Password = password
 	mailer.Encryption = mail.EncryptionSTARTTLS
 	mailer.KeepAlive = false
 	mailer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
-	return &Service{Mailer: mailer, FromAddress: args.SMTPFrom, FromMessage: args.SMTPFromMessage}
+	return &Service{Mailer: mailer, FromAddress: from, FromMessage: fromMessage}
 }
 
 func (s *Service) SendMail(address, message string) error {

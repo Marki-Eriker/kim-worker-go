@@ -20,7 +20,7 @@ type Services struct {
 	EmailService        email.IService
 }
 
-func NewServices(repos *Repositories, emailCredentials *EmailCredentials) *Services {
+func NewServices(repos *Repositories, mail *EmailCredentials) *Services {
 	return &Services{
 		UserService:         user.NewService(repos.UserRepository),
 		RefreshTokenService: refreshtoken.NewService(repos.RefreshTokenRepository),
@@ -28,6 +28,13 @@ func NewServices(repos *Repositories, emailCredentials *EmailCredentials) *Servi
 		ContractService:     contract.NewService(repos.ContractRepository),
 		FileService:         file.NewService(repos.FileRepository),
 		PaymentService:      payment.NewService(repos.PaymentRepository),
-		EmailService:        email.NewService(emailCredentials),
+		EmailService: email.NewService(
+			mail.SMTPHost,
+			mail.SMTPPort,
+			mail.SMTPUser,
+			mail.SMTPPassword,
+			mail.SMTPFrom,
+			mail.SMTPFromMessage,
+		),
 	}
 }
