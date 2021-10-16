@@ -10,7 +10,7 @@ import (
 )
 
 func (r *emailQueryResolver) Send(ctx context.Context, obj *model.EmailQuery, input model.EmailSendInput) (*model.EmailSendOutput, error) {
-	err := r.app.Services.EmailService.SendMail("kyzmin.ig@gmail.com", input.Message)
+	err := r.app.Services.EmailService.SendMail(input.Address, input.Message)
 	if err != nil {
 		return &model.EmailSendOutput{Ok: false, Error: NewUnknownErrorProblem(err)}, nil
 	}
