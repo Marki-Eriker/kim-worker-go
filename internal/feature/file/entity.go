@@ -3,7 +3,7 @@ package file
 import "time"
 
 type File struct {
-	tableName struct{} `pg:"lk_dev.file_storage_item"`
+	tableName struct{} `pg:"file_storage_item"`
 
 	ID               uint
 	OriginalFilename string

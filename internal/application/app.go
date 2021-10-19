@@ -18,7 +18,7 @@ func NewApp(args *Args) (*App, error) {
 		return nil, err
 	}
 
-	databases, err := postgres.NewPostgresDBs(args.PrimaryDatabaseURL, args.LKDatabaseURL, logger)
+	databases, err := postgres.NewPostgresDBs(args.PrimaryDatabaseURL, args.LKDatabaseURL, args.LKSchema, logger)
 	if err != nil {
 		return nil, err
 	}

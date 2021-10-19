@@ -12,6 +12,7 @@ type Args struct {
 	ListenPort         string
 	PrimaryDatabaseURL string
 	LKDatabaseURL      string
+	LKSchema           string
 	LogLevel           string
 	EmailCredentials   *EmailCredentials
 }
@@ -43,6 +44,11 @@ func NewArgs() (*Args, error) {
 	lkDatabaseURL := os.Getenv("LK_DB_URL")
 	if !checkPostgresURL(lkDatabaseURL) {
 		return nil, fmt.Errorf("invalid database URL: %v", lkDatabaseURL)
+	}
+
+	lkSchema := os.Getenv("LK_DB_SCHEMA")
+	if lkSchema == "" {
+		return nil, fmt.Errorf("LK_DB_SCHEMA must be set, lk or lk_dev")
 	}
 
 	logLevel := os.Getenv("LOG_LEVEL")
@@ -81,6 +87,7 @@ func NewArgs() (*Args, error) {
 		ListenPort:         listenPort,
 		PrimaryDatabaseURL: primaryDatabaseURL,
 		LKDatabaseURL:      lkDatabaseURL,
+		LKSchema:           lkSchema,
 		LogLevel:           logLevel,
 		EmailCredentials: &EmailCredentials{
 			SMTPHost:        SMTPHost,

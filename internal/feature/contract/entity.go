@@ -3,7 +3,7 @@ package contract
 import "time"
 
 type Contract struct {
-	tableName struct{} `pg:"lk_dev.contract"`
+	tableName struct{} `pg:"contract"`
 
 	ID                uint
 	ServiceRequestID  uint

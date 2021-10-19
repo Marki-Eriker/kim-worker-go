@@ -6,7 +6,7 @@ import (
 )
 
 type Request struct {
-	tableName struct{} `pg:"lk_dev.service_request,discard_unknown_columns"`
+	tableName struct{} `pg:"service_request,discard_unknown_columns"`
 
 	ID                       uint
 	ServiceTypeID            uint
@@ -21,14 +21,14 @@ type Request struct {
 }
 
 type ServiceType struct {
-	tableName struct{} `pg:"lk_dev.service_type"`
+	tableName struct{} `pg:"service_type"`
 
 	ID   uint
 	Name string
 }
 
 type Contractor struct {
-	tableName struct{} `pg:"lk_dev.contractor"`
+	tableName struct{} `pg:"contractor"`
 
 	ID             uint
 	ContractorType model.ContractorType
@@ -38,7 +38,7 @@ type Contractor struct {
 }
 
 type Person struct {
-	tableName struct{} `pg:"lk_dev.person"`
+	tableName struct{} `pg:"person"`
 
 	ID    uint
 	Email string
@@ -46,7 +46,7 @@ type Person struct {
 }
 
 type OrganizationContact struct {
-	tableName struct{} `pg:"lk_dev.organization_contact"`
+	tableName struct{} `pg:"organization_contact"`
 
 	ID    uint `pg:"organization_id"`
 	Phone string
@@ -54,7 +54,7 @@ type OrganizationContact struct {
 }
 
 type BankAccount struct {
-	tableName struct{} `pg:"lk_dev.bank_account"`
+	tableName struct{} `pg:"bank_account"`
 
 	ID                  uint
 	AccountNumber       string
@@ -64,7 +64,7 @@ type BankAccount struct {
 }
 
 type Signatory struct {
-	tableName struct{} `pg:"lk_dev.contractor_signatory"`
+	tableName struct{} `pg:"contractor_signatory"`
 
 	ID            uint
 	Name          string
@@ -74,7 +74,7 @@ type Signatory struct {
 }
 
 type Ship struct {
-	tableName struct{} `pg:"lk_dev.ship"`
+	tableName struct{} `pg:"ship"`
 
 	ID                              uint
 	Name                            string
@@ -90,7 +90,7 @@ type Ship struct {
 }
 
 type ShipRequest struct {
-	tableName struct{} `pg:"lk_dev.service_request_ship"`
+	tableName struct{} `pg:"service_request_ship"`
 
 	ServiceRequestID uint `pg:"service_request_id"`
 	ShipID           uint `pg:"ship_id"`

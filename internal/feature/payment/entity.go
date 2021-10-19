@@ -3,7 +3,7 @@ package payment
 import "time"
 
 type Invoice struct {
-	tableName struct{} `pg:"lk_dev.contract_payment_invoice"`
+	tableName struct{} `pg:"contract_payment_invoice"`
 
 	ID                uint
 	ContractID        uint
@@ -12,7 +12,7 @@ type Invoice struct {
 }
 
 type Confirmation struct {
-	tableName struct{} `pg:"lk_dev.contract_payment_confirmation"`
+	tableName struct{} `pg:"contract_payment_confirmation"`
 
 	ID                       uint
 	FileStorageItemID        uint

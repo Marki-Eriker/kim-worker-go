@@ -18,15 +18,15 @@ type loggerHook struct {
 	logger   *zap.Logger
 }
 
-func NewPostgresDBs(primaryURL, lkURL string, logger *zap.Logger) (*Databases, error) {
-	primaryDB, err := newDB(primaryURL)
+func NewPostgresDBs(primaryURL, lkURL string, schema string, logger *zap.Logger) (*Databases, error) {
+	primaryDB, err := newDB(primaryURL, "")
 	if err != nil {
 		return nil, err
 	}
 
 	primaryDB.AddQueryHook(loggerHook{"primary DB", logger})
 
-	lkDB, err := newDB(lkURL)
+	lkDB, err := newDB(lkURL, schema)
 	if err != nil {
 		return nil, err
 	}
@@ -51,10 +51,17 @@ func (dbs *Databases) Close() error {
 	return nil
 }
 
-func newDB(url string) (*pg.DB, error) {
+func newDB(url string, schema string) (*pg.DB, error) {
 	opts, err := pg.ParseURL(url)
 	if err != nil {
 		return nil, err
+	}
+
+	if schema != "" {
+		opts.OnConnect = func(ctx context.Context, cn *pg.Conn) error {
+			_, _ = cn.Exec("set search_path=?", schema)
+			return nil
+		}
 	}
 
 	db := pg.Connect(opts)
@@ -62,7 +69,7 @@ func newDB(url string) (*pg.DB, error) {
 	var n int
 	_, err = db.QueryOne(pg.Scan(&n), "SELECT 1")
 	if err != nil {
-		return nil, fmt.Errorf("cant connect database %v", url)
+		return nil, fmt.Errorf("cant connect database %v, %v", url, err.Error())
 	}
 
 	return db, nil
